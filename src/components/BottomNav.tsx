@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, UtensilsCrossed, Dumbbell, ClipboardList, User } from "lucide-react";
+import { Home, UtensilsCrossed, Dumbbell, ClipboardList, Brain, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tabs = [
@@ -7,14 +7,14 @@ const tabs = [
   { to: "/meals", icon: UtensilsCrossed, label: "Meals" },
   { to: "/exercise", icon: Dumbbell, label: "Exercise" },
   { to: "/logs", icon: ClipboardList, label: "Logs" },
+  { to: "/insights", icon: Brain, label: "Insights" },
   { to: "/profile", icon: User, label: "Profile" },
 ];
 
 const BottomNav = () => {
   const location = useLocation();
 
-  // Hide on onboarding
-  if (location.pathname === "/onboarding") return null;
+  if (location.pathname === "/onboarding" || location.pathname === "/caregiver") return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-bottom">
@@ -25,7 +25,7 @@ const BottomNav = () => {
             <NavLink
               key={tab.to}
               to={tab.to}
-              className="flex flex-col items-center justify-center gap-0.5 min-w-[3.5rem] py-1 relative"
+              className="flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1 relative"
             >
               {isActive && (
                 <motion.div
@@ -35,12 +35,12 @@ const BottomNav = () => {
                 />
               )}
               <tab.icon
-                size={22}
+                size={20}
                 className={isActive ? "text-primary" : "text-muted-foreground"}
                 strokeWidth={isActive ? 2.5 : 2}
               />
               <span
-                className={`text-[0.65rem] font-semibold ${
+                className={`text-[0.6rem] font-semibold ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`}
               >

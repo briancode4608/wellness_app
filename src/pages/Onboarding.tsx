@@ -8,6 +8,7 @@ const steps = [
   { id: "basics", title: "About You", subtitle: "Tell us a bit about yourself" },
   { id: "health", title: "Health Info", subtitle: "Help us understand your needs" },
   { id: "lifestyle", title: "Lifestyle", subtitle: "Your daily habits matter" },
+  { id: "medication", title: "Medication", subtitle: "Your medication schedule" },
 ];
 
 const conditions = ["Diabetes", "Heart Disease", "Hypertension", "Autoimmune", "Recovering", "Elderly Care", "None"];
@@ -25,6 +26,8 @@ const Onboarding = () => {
     conditions: [] as string[],
     diet: [] as string[],
     activity: "",
+    medications: "",
+    medSchedule: "",
   });
 
   const toggleArray = (field: "conditions" | "diet", value: string) => {
@@ -48,6 +51,8 @@ const Onboarding = () => {
     if (step === 3) return form.activity.length > 0;
     return true;
   };
+
+  const lastStep = steps.length - 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto">
@@ -77,9 +82,9 @@ const Onboarding = () => {
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <Heart size={36} className="text-primary" />
               </div>
-              <h1 className="text-display mb-3">VitalCare</h1>
+              <h1 className="text-display mb-3">VitalCare AI</h1>
               <p className="text-body-lg text-muted-foreground max-w-xs">
-                Your gentle companion for daily health management. Simple, supportive, and made for you.
+                Your AI-powered health companion. Simple, supportive, and personalized for you.
               </p>
             </div>
           )}
@@ -196,6 +201,46 @@ const Onboarding = () => {
               </div>
             </div>
           )}
+
+          {step === 4 && (
+            <div className="flex-1">
+              <h2 className="text-heading mb-1">{steps[4].title}</h2>
+              <p className="text-body text-muted-foreground mb-6">{steps[4].subtitle}</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-caption font-semibold text-muted-foreground mb-1.5 block">Current Medications</label>
+                  <textarea
+                    value={form.medications}
+                    onChange={(e) => setForm({ ...form, medications: e.target.value })}
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-body focus:outline-none focus:ring-2 focus:ring-primary/30 min-h-[100px] resize-none"
+                    placeholder="e.g., Metformin 500mg, Lisinopril 10mg..."
+                  />
+                </div>
+                <div>
+                  <label className="text-caption font-semibold text-muted-foreground mb-1.5 block">Medication Schedule</label>
+                  <div className="space-y-2">
+                    {["Morning", "Afternoon", "Evening", "Before Bed"].map((time) => (
+                      <button
+                        key={time}
+                        onClick={() => setForm({ ...form, medSchedule: form.medSchedule.includes(time) ? form.medSchedule.replace(time + ",", "").replace(time, "") : form.medSchedule + time + "," })}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-body font-semibold transition-all ${
+                          form.medSchedule.includes(time)
+                            ? "bg-health-purple text-health-purple-foreground"
+                            : "bg-card border border-border text-foreground"
+                        }`}
+                      >
+                        {time}
+                        {form.medSchedule.includes(time) && <Check size={16} />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-caption text-muted-foreground text-center">
+                  This is optional — you can update it later in your profile.
+                </p>
+              </div>
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -210,11 +255,11 @@ const Onboarding = () => {
           </button>
         )}
         <button
-          onClick={() => (step < 3 ? setStep(step + 1) : finish())}
+          onClick={() => (step < lastStep ? setStep(step + 1) : finish())}
           disabled={!canNext()}
           className="flex-1 h-12 bg-primary text-primary-foreground rounded-lg font-bold text-body-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-40"
         >
-          {step === 0 ? "Get Started" : step === 3 ? "Complete Setup" : "Continue"}
+          {step === 0 ? "Get Started" : step === lastStep ? "Complete Setup" : "Continue"}
           <ArrowRight size={18} />
         </button>
       </div>

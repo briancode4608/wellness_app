@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save } from "lucide-react";
+import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save, Pill, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
@@ -15,6 +16,8 @@ const Profile = () => {
     conditions: stored.conditions || ["Diabetes"],
     diet: stored.diet || ["Low Sugar"],
     activity: stored.activity || "Light",
+    medications: stored.medications || "",
+    medSchedule: stored.medSchedule || "",
   });
 
   const save = () => {
@@ -112,7 +115,7 @@ const Profile = () => {
 
       {/* Activity */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <HealthCard>
+        <HealthCard className="mb-4">
           <p className="text-subheading flex items-center gap-2 mb-3">
             <Dumbbell size={16} className="text-health-blue" /> Activity Level
           </p>
@@ -120,6 +123,42 @@ const Profile = () => {
             {profile.activity}
           </span>
         </HealthCard>
+      </motion.div>
+
+      {/* Medications */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+        <HealthCard className="mb-4">
+          <p className="text-subheading flex items-center gap-2 mb-3">
+            <Pill size={16} className="text-health-purple" /> Medications
+          </p>
+          {profile.medications ? (
+            <p className="text-body text-muted-foreground">{profile.medications}</p>
+          ) : (
+            <p className="text-caption text-muted-foreground italic">No medications added yet</p>
+          )}
+          {profile.medSchedule && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {profile.medSchedule.split(",").filter(Boolean).map((t: string) => (
+                <span key={t} className="bg-health-purple/10 text-health-purple text-[0.65rem] font-semibold px-2 py-1 rounded-full">
+                  {t.trim()}
+                </span>
+              ))}
+            </div>
+          )}
+        </HealthCard>
+      </motion.div>
+
+      {/* Caregiver Link */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <Link to="/caregiver">
+          <HealthCard className="flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform">
+            <Shield size={20} className="text-primary" />
+            <div>
+              <p className="text-body font-bold">Caregiver Dashboard</p>
+              <p className="text-caption text-muted-foreground">View the doctor/caregiver admin panel</p>
+            </div>
+          </HealthCard>
+        </Link>
       </motion.div>
     </PageLayout>
   );

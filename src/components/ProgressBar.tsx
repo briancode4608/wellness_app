@@ -5,6 +5,7 @@ interface ProgressBarProps {
   label?: string;
   showValue?: boolean;
   size?: "sm" | "md";
+  className?: string;
 }
 
 const colorMap = {
@@ -23,11 +24,12 @@ const ProgressBar = ({
   label,
   showValue = false,
   size = "md",
+  className = "",
 }: ProgressBarProps) => {
   const percentage = Math.min((value / max) * 100, 100);
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       {(label || showValue) && (
         <div className="flex justify-between items-center mb-1.5">
           {label && <span className="text-caption text-muted-foreground">{label}</span>}

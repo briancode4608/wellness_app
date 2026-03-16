@@ -9,7 +9,10 @@ import Dashboard from "./pages/Dashboard";
 import Meals from "./pages/Meals";
 import Exercise from "./pages/Exercise";
 import Logs from "./pages/Logs";
+import Insights from "./pages/Insights";
+import Routine from "./pages/Routine";
 import Profile from "./pages/Profile";
+import CaregiverDashboard from "./pages/CaregiverDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,10 +31,13 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/caregiver" element={<CaregiverDashboard />} />
           <Route path="/" element={<RequireOnboarding><Dashboard /></RequireOnboarding>} />
           <Route path="/meals" element={<RequireOnboarding><Meals /></RequireOnboarding>} />
           <Route path="/exercise" element={<RequireOnboarding><Exercise /></RequireOnboarding>} />
           <Route path="/logs" element={<RequireOnboarding><Logs /></RequireOnboarding>} />
+          <Route path="/insights" element={<RequireOnboarding><Insights /></RequireOnboarding>} />
+          <Route path="/routine" element={<RequireOnboarding><Routine /></RequireOnboarding>} />
           <Route path="/profile" element={<RequireOnboarding><Profile /></RequireOnboarding>} />
           <Route path="*" element={<NotFound />} />
         </Routes>

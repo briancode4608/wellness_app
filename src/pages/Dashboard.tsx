@@ -1,4 +1,5 @@
-import { Sunrise, Sun, Moon, UtensilsCrossed, Dumbbell, Droplets, Pill, BedDouble } from "lucide-react";
+import { Sunrise, Sun, Moon, UtensilsCrossed, Dumbbell, Droplets, Pill, BedDouble, Brain, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
@@ -6,6 +7,7 @@ import ProgressBar from "@/components/ProgressBar";
 import MealCard from "@/components/MealCard";
 import QuickLogButton from "@/components/QuickLogButton";
 import Timeline from "@/components/Timeline";
+import InsightCard from "@/components/InsightCard";
 
 const Dashboard = () => {
   const profile = JSON.parse(localStorage.getItem("healthProfile") || '{"name":"Friend"}');
@@ -47,6 +49,29 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
+      {/* AI Insight */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-5">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-caption font-semibold text-muted-foreground">AI Insight</p>
+          <Link to="/insights" className="text-caption text-primary font-semibold">View All →</Link>
+        </div>
+        <InsightCard message="Your energy improves on days you walk at least 20 minutes. Keep it up!" type="trend" />
+      </motion.div>
+
+      {/* Hydration */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }} className="mt-5">
+        <HealthCard className="border-health-blue/20 bg-health-blue/5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Droplets size={18} className="text-health-blue" />
+              <p className="text-body font-semibold">Hydration</p>
+            </div>
+            <span className="text-caption font-bold text-health-blue">6 / 8 glasses</span>
+          </div>
+          <ProgressBar value={6} max={8} color="blue" size="sm" className="mt-2" />
+        </HealthCard>
+      </motion.div>
+
       {/* Progress */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="mt-5">
         <HealthCard>
@@ -71,6 +96,30 @@ const Dashboard = () => {
           items={["Grilled chicken", "Brown rice", "Steamed veggies"]}
           color="bg-health-green"
         />
+      </motion.div>
+
+      {/* Quick Links */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }} className="mt-5">
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/routine">
+            <HealthCard className="flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform">
+              <Calendar size={20} className="text-primary" />
+              <div>
+                <p className="text-caption font-bold">Routine</p>
+                <p className="text-[0.65rem] text-muted-foreground">Daily plan</p>
+              </div>
+            </HealthCard>
+          </Link>
+          <Link to="/insights">
+            <HealthCard className="flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform">
+              <Brain size={20} className="text-primary" />
+              <div>
+                <p className="text-caption font-bold">Insights</p>
+                <p className="text-[0.65rem] text-muted-foreground">AI analysis</p>
+              </div>
+            </HealthCard>
+          </Link>
+        </div>
       </motion.div>
 
       {/* Daily Timeline */}
