@@ -151,17 +151,27 @@ const Profile = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Caregiver Link */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-        <Link to="/caregiver">
-          <HealthCard className="flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform">
-            <Shield size={20} className="text-primary" />
-            <div>
-              <p className="text-body font-bold">Caregiver Dashboard</p>
-              <p className="text-caption text-muted-foreground">View the doctor/caregiver admin panel</p>
-            </div>
-          </HealthCard>
-        </Link>
+      {user?.role === "caregiver" && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-4">
+          <Link to="/caregiver">
+            <HealthCard className="flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform">
+              <Shield size={20} className="text-primary" />
+              <div>
+                <p className="text-body font-bold">Caregiver Dashboard</p>
+                <p className="text-caption text-muted-foreground">View the doctor/caregiver admin panel</p>
+              </div>
+            </HealthCard>
+          </Link>
+        </motion.div>
+      )}
+
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+        <button
+          onClick={() => { logout(); navigate("/login", { replace: true }); }}
+          className="w-full flex items-center justify-center gap-2 bg-card border border-border rounded-lg py-3.5 text-body-lg font-bold text-muted-foreground active:scale-[0.98] transition-transform"
+        >
+          <LogOut size={18} /> Sign Out
+        </button>
       </motion.div>
     </PageLayout>
   );
