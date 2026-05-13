@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, UtensilsCrossed, Dumbbell, ClipboardList, Brain, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 const tabs = [
   { to: "/", icon: Home, label: "Home" },
@@ -11,10 +12,14 @@ const tabs = [
   { to: "/profile", icon: User, label: "Profile" },
 ];
 
+const HIDDEN_ROUTES = ["/onboarding", "/caregiver", "/login", "/signup"];
+
 const BottomNav = () => {
   const location = useLocation();
+  const { user } = useAuth();
 
-  if (location.pathname === "/onboarding" || location.pathname === "/caregiver") return null;
+  if (!user || user.role === "caregiver") return null;
+  if (HIDDEN_ROUTES.includes(location.pathname)) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-bottom">

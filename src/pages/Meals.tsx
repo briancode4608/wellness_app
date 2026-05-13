@@ -1,56 +1,26 @@
-import { useState } from "react";
-import { UtensilsCrossed, Coffee, Sun, Moon, Camera } from "lucide-react";
+import { useEffect, useState } from "react";
+import { UtensilsCrossed, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import MealCard from "@/components/MealCard";
 import HealthCard from "@/components/HealthCard";
 import ProgressBar from "@/components/ProgressBar";
 import CameraScanner from "@/components/CameraScanner";
+import { fetchMeals, fetchNutrients } from "@/api/health";
 import { toast } from "sonner";
-
-const meals = [
-  {
-    title: "Breakfast",
-    time: "7:00 AM",
-    calories: 380,
-    icon: Coffee,
-    items: ["Oatmeal with berries", "Green tea", "Boiled egg"],
-    color: "bg-health-yellow",
-    logged: true,
-  },
-  {
-    title: "Lunch",
-    time: "12:30 PM",
-    calories: 520,
-    icon: Sun,
-    items: ["Grilled chicken salad", "Brown rice", "Steamed broccoli"],
-    color: "bg-health-green",
-    logged: false,
-  },
-  {
-    title: "Dinner",
-    time: "7:00 PM",
-    calories: 450,
-    icon: Moon,
-    items: ["Baked salmon", "Quinoa", "Roasted vegetables"],
-    color: "bg-health-blue",
-    logged: false,
-  },
-];
-
-const nutrients = [
-  { label: "Protein", value: 45, max: 80, color: "blue" as const },
-  { label: "Carbs", value: 120, max: 200, color: "yellow" as const },
-  { label: "Fat", value: 25, max: 55, color: "pink" as const },
-  { label: "Fiber", value: 12, max: 30, color: "green" as const },
-];
 
 const Meals = () => {
   const [showScanner, setShowScanner] = useState(false);
+  const [meals, setMeals] = useState<any[]>([]);
+  const [nutrients, setNutrients] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchMeals().then((r) => setMeals(r.data));
+    fetchNutrients().then((r) => setNutrients(r.data));
+  }, []);
 
   return (
     <PageLayout title="AI Meal Planner" subtitle="Personalized meal recommendations for today">
-      {/* Nutrition Overview */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <HealthCard className="mb-5">
           <div className="flex items-center justify-between mb-3">
@@ -66,7 +36,6 @@ const Meals = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Meal Cards */}
       <div className="space-y-3">
         {meals.map((meal, i) => (
           <motion.div key={meal.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
@@ -75,7 +44,6 @@ const Meals = () => {
         ))}
       </div>
 
-      {/* Buttons */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-5 space-y-3">
         <button
           onClick={() => setShowScanner(true)}
@@ -88,7 +56,6 @@ const Meals = () => {
         </button>
       </motion.div>
 
-      {/* Camera Scanner */}
       <AnimatePresence>
         {showScanner && (
           <CameraScanner

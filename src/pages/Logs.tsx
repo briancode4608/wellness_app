@@ -1,31 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
-import ProgressBar from "@/components/ProgressBar";
+import { fetchWeekData, submitDailyLog } from "@/api/health";
+import { toast } from "sonner";
 
 const moods = ["😊", "🙂", "😐", "😔", "😢"];
 const energyLevels = ["⚡ High", "🔋 Good", "😐 Okay", "🪫 Low", "😴 Very Low"];
-
-const weekData = [
-  { day: "Mon", mood: 4, energy: 3, sleep: 7 },
-  { day: "Tue", mood: 3, energy: 4, sleep: 8 },
-  { day: "Wed", mood: 5, energy: 4, sleep: 7.5 },
-  { day: "Thu", mood: 4, energy: 3, sleep: 6 },
-  { day: "Fri", mood: 3, energy: 2, sleep: 7 },
-  { day: "Sat", mood: 4, energy: 4, sleep: 8 },
-  { day: "Sun", mood: 0, energy: 0, sleep: 0 },
-];
 
 const Logs = () => {
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [selectedEnergy, setSelectedEnergy] = useState<number | null>(null);
   const [sleepHours, setSleepHours] = useState("7");
   const [symptoms, setSymptoms] = useState("");
+  const [weekData, setWeekData] = useState<any[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchWeekData().then((r) => setWeekData(r.data));
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await submitDailyLog({ mood: selectedMood, energy: selectedEnergy, sleepHours, symptoms });
+      toast.success("Today's log saved", { description: "Thanks for checking in." });
+    } catch {
+      toast.error("Couldn't save your log. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <PageLayout title="Health Logs" subtitle="Track how you're feeling today">
-      {/* Mood */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <HealthCard className="mb-4">
           <p className="text-subheading mb-3">How are you feeling?</p>
@@ -45,7 +53,6 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Energy */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <HealthCard className="mb-4">
           <p className="text-subheading mb-3">Energy Level</p>
@@ -55,9 +62,7 @@ const Logs = () => {
                 key={i}
                 onClick={() => setSelectedEnergy(i)}
                 className={`px-3 py-2 rounded-lg text-caption font-semibold transition-all ${
-                  selectedEnergy === i
-                    ? "bg-health-blue text-health-blue-foreground"
-                    : "bg-muted text-muted-foreground"
+                  selectedEnergy === i ? "bg-health-blue text-health-blue-foreground" : "bg-muted text-muted-foreground"
                 }`}
               >
                 {level}
@@ -67,7 +72,6 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Sleep + Symptoms */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <HealthCard className="mb-4">
           <p className="text-subheading mb-3">Sleep & Symptoms</p>
@@ -92,7 +96,6 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Weekly chart */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
         <p className="text-caption font-semibold text-muted-foreground mb-2">This Week</p>
         <HealthCard className="mb-4">
@@ -111,7 +114,6 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Weekly mood */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
         <HealthCard className="mb-4">
           <p className="text-caption font-semibold text-muted-foreground mb-3">Mood Trend</p>
@@ -126,10 +128,13 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      {/* Save */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-        <button className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform">
-          Save Today's Log
+        <button
+          onClick={save}
+          disabled={saving}
+          className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform disabled:opacity-60"
+        >
+          {saving ? "Saving..." : "Save Today's Log"}
         </button>
       </motion.div>
     </PageLayout>
