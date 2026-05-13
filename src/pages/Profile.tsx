@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save, Pill, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
+import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save, Pill, Shield, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
+import { useAuth } from "@/context/AuthContext";
 
 const Profile = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const stored = JSON.parse(localStorage.getItem("healthProfile") || "{}");
   const [editing, setEditing] = useState(false);
   const [profile, setProfile] = useState({
