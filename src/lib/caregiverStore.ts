@@ -134,9 +134,20 @@ export const addInsight = (patientId: string, i: Omit<ClinicalInsight, "id" | "d
   persist(list);
 };
 
+let cachedSnapshot: Patient[] | null = null;
+let cachedKey = "";
+const getSnapshot = (): Patient[] => {
+  const raw = localStorage.getItem(KEY) || "";
+  if (raw !== cachedKey || !cachedSnapshot) {
+    cachedKey = raw;
+    cachedSnapshot = loadPatients();
+  }
+  return cachedSnapshot;
+};
+
 export const usePatients = (): Patient[] =>
   useSyncExternalStore(
     (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
-    () => loadPatients(),
+    getSnapshot,
     () => []
   );
