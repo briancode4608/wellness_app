@@ -168,6 +168,18 @@ const Profile = () => {
         </motion.div>
       )}
 
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }} className="mb-3">
+        <button
+          onClick={() => {
+            exportPatientHealthRecord(profile as any, loadUserData());
+            toast.success("Health record downloaded");
+          }}
+          className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform"
+        >
+          <Download size={18} /> Export Health Record (PDF)
+        </button>
+      </motion.div>
+
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
         <button
           onClick={() => { logout(); navigate("/login", { replace: true }); }}
