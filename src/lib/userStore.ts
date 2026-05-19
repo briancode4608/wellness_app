@@ -143,14 +143,24 @@ export const todayTotals = (data: UserData = loadUserData()) => {
   };
 };
 
+// Cached snapshot so useSyncExternalStore gets referential equality between renders.
+let cachedSnapshot: UserData | null = null;
+let cachedKey = "";
+const getSnapshot = (): UserData => {
+  const email = currentEmail();
+  const raw = localStorage.getItem(keyFor(email)) || "";
+  const key = email + "|" + raw;
+  if (key !== cachedKey || !cachedSnapshot) {
+    cachedKey = key;
+    cachedSnapshot = loadUserData(email);
+  }
+  return cachedSnapshot;
+};
+
 // React hook for components to subscribe to store changes.
-export const useUserData = (): UserData => {
-  return useSyncExternalStore(
+export const useUserData = (): UserData =>
+  useSyncExternalStore(
     (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
-    () => {
-      // Cache key so React detects changes
-      return loadUserData();
-    },
+    getSnapshot,
     () => empty()
   );
-};
