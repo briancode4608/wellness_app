@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Download } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
 import { fetchWeekData, submitDailyLog } from "@/api/health";
 import { toast } from "sonner";
+import { addMood, useUserData } from "@/lib/userStore";
+import { exportPatientHealthRecord } from "@/lib/pdfExport";
 
 const moods = ["😊", "🙂", "😐", "😔", "😢"];
 const energyLevels = ["⚡ High", "🔋 Good", "😐 Okay", "🪫 Low", "😴 Very Low"];
@@ -15,21 +18,43 @@ const Logs = () => {
   const [symptoms, setSymptoms] = useState("");
   const [weekData, setWeekData] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const data = useUserData();
 
   useEffect(() => {
     fetchWeekData().then((r) => setWeekData(r.data));
   }, []);
 
   const save = async () => {
+    if (selectedMood === null && selectedEnergy === null && !sleepHours && !symptoms) {
+      toast.error("Add at least one entry first");
+      return;
+    }
     setSaving(true);
     try {
       await submitDailyLog({ mood: selectedMood, energy: selectedEnergy, sleepHours, symptoms });
+      addMood({
+        mood: selectedMood ?? 2,
+        energy: selectedEnergy ?? 2,
+        sleepHours: Number(sleepHours) || 7,
+        symptoms,
+      });
       toast.success("Today's log saved", { description: "Thanks for checking in." });
+      setSelectedMood(null); setSelectedEnergy(null); setSymptoms("");
     } catch {
       toast.error("Couldn't save your log. Please try again.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const exportPDF = () => {
+    const stored = JSON.parse(localStorage.getItem("healthProfile") || "{}");
+    exportPatientHealthRecord(
+      { name: stored.name || "Patient", age: stored.age, weight: stored.weight, height: stored.height,
+        conditions: stored.conditions, diet: stored.diet, activity: stored.activity, medications: stored.medications },
+      data
+    );
+    toast.success("Health log exported");
   };
 
   return (
