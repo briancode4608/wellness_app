@@ -106,8 +106,9 @@ const Meals = () => {
             onClose={() => setShowScanner(false)}
             onScan={(result) => {
               setShowScanner(false);
-              // Open inline log form prefilled with detected food.
-              setScanDefaults({ name: typeof result === "string" ? result : (result as any).name || "Scanned meal", calories: 350 });
+              const name = typeof result === "string" ? result.split("–")[0].trim() : "Scanned meal";
+              const calMatch = typeof result === "string" ? result.match(/(\d+)\s*cal/i) : null;
+              setScanDefaults({ name, calories: calMatch ? Number(calMatch[1]) : 350 });
               setOpenLog(true);
               toast.message("Food detected — confirm details to log");
             }}
