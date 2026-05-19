@@ -153,13 +153,19 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="space-y-3">
         <button
           onClick={save}
           disabled={saving}
           className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Today's Log"}
+        </button>
+        <button
+          onClick={exportPDF}
+          className="w-full bg-card border border-border rounded-lg py-3 text-body font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition"
+        >
+          <Download size={16} /> Export Health Record (PDF)
         </button>
       </motion.div>
     </PageLayout>
