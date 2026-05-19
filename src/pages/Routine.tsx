@@ -1,17 +1,45 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Clock } from "lucide-react";
+import { Plus, Clock, Trash2 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
 import Timeline from "@/components/Timeline";
+import AddRoutineDialog from "@/components/AddRoutineDialog";
 import { fetchRoutine } from "@/api/health";
+import { useUserData, removeRoutineItem } from "@/lib/userStore";
+import { UtensilsCrossed, Pill, Dumbbell, Droplets, BedDouble, Calendar as CalIcon } from "lucide-react";
+
+const iconFor = (cat: string) => {
+  const map: any = { Meal: UtensilsCrossed, Medication: Pill, Exercise: Dumbbell, Hydration: Droplets, Sleep: BedDouble, Other: CalIcon };
+  return map[cat] || CalIcon;
+};
+const colorFor = (cat: string) => {
+  const map: any = { Meal: "bg-health-green", Medication: "bg-health-purple", Exercise: "bg-health-blue", Hydration: "bg-health-blue", Sleep: "bg-health-pink", Other: "bg-primary" };
+  return map[cat] || "bg-primary";
+};
 
 const Routine = () => {
-  const [routine, setRoutine] = useState<any[]>([]);
+  const [seed, setSeed] = useState<any[]>([]);
+  const [open, setOpen] = useState(false);
+  const data = useUserData();
 
-  useEffect(() => {
-    fetchRoutine().then((r) => setRoutine(r.data));
-  }, []);
+  useEffect(() => { fetchRoutine().then((r) => setSeed(r.data)); }, []);
+
+  const customItems = data.routine.map((r) => ({
+    time: r.time, title: r.title, icon: iconFor(r.category), color: colorFor(r.category), completed: false, id: r.id,
+  }));
+
+  const merged = [...seed.map((s) => ({ ...s, id: undefined })), ...customItems].sort((a, b) => {
+    const t = (s: string) => {
+      const m = s.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      if (!m) return 0;
+      let h = +m[1]; const min = +m[2]; const ap = m[3]?.toUpperCase();
+      if (ap === "PM" && h < 12) h += 12;
+      if (ap === "AM" && h === 12) h = 0;
+      return h * 60 + min;
+    };
+    return t(a.time) - t(b.time);
+  });
 
   return (
     <PageLayout title="Daily Routine" subtitle="Your personalized daily schedule">
@@ -19,7 +47,7 @@ const Routine = () => {
         <HealthCard className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-subheading">Today's Plan</p>
-            <p className="text-caption text-muted-foreground">{routine.length} activities scheduled</p>
+            <p className="text-caption text-muted-foreground">{merged.length} activities scheduled</p>
           </div>
           <div className="flex items-center gap-1 text-caption text-primary font-semibold">
             <Clock size={14} />
@@ -28,37 +56,39 @@ const Routine = () => {
         </HealthCard>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-        <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
-          {[
-            { label: "Meals", icon: "🍽️", count: 3 },
-            { label: "Meds", icon: "💊", count: 3 },
-            { label: "Exercise", icon: "🏃", count: 2 },
-            { label: "Hydration", icon: "💧", count: 3 },
-            { label: "Sleep", icon: "😴", count: 1 },
-          ].map((cat) => (
-            <div key={cat.label} className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-2 flex-shrink-0">
-              <span>{cat.icon}</span>
-              <span className="text-caption font-semibold">{cat.label}</span>
-              <span className="text-[0.6rem] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full font-bold">
-                {cat.count}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <HealthCard>
-          <Timeline items={routine} />
-        </HealthCard>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-5">
-        <button className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4">
+        <button onClick={() => setOpen(true)}
+          className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
           <Plus size={18} /> Add to Routine
         </button>
       </motion.div>
+
+      {data.routine.length > 0 && (
+        <div className="mb-5">
+          <p className="text-caption font-semibold text-muted-foreground mb-2">Your custom items</p>
+          <div className="space-y-2">
+            {data.routine.map((r) => (
+              <HealthCard key={r.id} className="flex justify-between items-center">
+                <div>
+                  <p className="text-body font-semibold">{r.time} — {r.title}</p>
+                  <p className="text-caption text-muted-foreground">{r.category}{r.notes ? ` • ${r.notes}` : ""}</p>
+                </div>
+                <button onClick={() => removeRoutineItem(r.id)} className="text-muted-foreground p-1">
+                  <Trash2 size={16} />
+                </button>
+              </HealthCard>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <HealthCard>
+          <Timeline items={merged} />
+        </HealthCard>
+      </motion.div>
+
+      <AddRoutineDialog open={open} onClose={() => setOpen(false)} />
     </PageLayout>
   );
 };

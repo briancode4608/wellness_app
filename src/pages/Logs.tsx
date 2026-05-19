@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Download } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
 import { fetchWeekData, submitDailyLog } from "@/api/health";
 import { toast } from "sonner";
+import { addMood, useUserData } from "@/lib/userStore";
+import { exportPatientHealthRecord } from "@/lib/pdfExport";
 
 const moods = ["😊", "🙂", "😐", "😔", "😢"];
 const energyLevels = ["⚡ High", "🔋 Good", "😐 Okay", "🪫 Low", "😴 Very Low"];
@@ -15,21 +18,43 @@ const Logs = () => {
   const [symptoms, setSymptoms] = useState("");
   const [weekData, setWeekData] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const data = useUserData();
 
   useEffect(() => {
     fetchWeekData().then((r) => setWeekData(r.data));
   }, []);
 
   const save = async () => {
+    if (selectedMood === null && selectedEnergy === null && !sleepHours && !symptoms) {
+      toast.error("Add at least one entry first");
+      return;
+    }
     setSaving(true);
     try {
       await submitDailyLog({ mood: selectedMood, energy: selectedEnergy, sleepHours, symptoms });
+      addMood({
+        mood: selectedMood ?? 2,
+        energy: selectedEnergy ?? 2,
+        sleepHours: Number(sleepHours) || 7,
+        symptoms,
+      });
       toast.success("Today's log saved", { description: "Thanks for checking in." });
+      setSelectedMood(null); setSelectedEnergy(null); setSymptoms("");
     } catch {
       toast.error("Couldn't save your log. Please try again.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const exportPDF = () => {
+    const stored = JSON.parse(localStorage.getItem("healthProfile") || "{}");
+    exportPatientHealthRecord(
+      { name: stored.name || "Patient", age: stored.age, weight: stored.weight, height: stored.height,
+        conditions: stored.conditions, diet: stored.diet, activity: stored.activity, medications: stored.medications },
+      data
+    );
+    toast.success("Health log exported");
   };
 
   return (
@@ -128,13 +153,19 @@ const Logs = () => {
         </HealthCard>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="space-y-3">
         <button
           onClick={save}
           disabled={saving}
           className="w-full bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Today's Log"}
+        </button>
+        <button
+          onClick={exportPDF}
+          className="w-full bg-card border border-border rounded-lg py-3 text-body font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition"
+        >
+          <Download size={16} /> Export Health Record (PDF)
         </button>
       </motion.div>
     </PageLayout>

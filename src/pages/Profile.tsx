@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save, Pill, Shield, LogOut } from "lucide-react";
+import { User, Heart, UtensilsCrossed, Dumbbell, Edit3, Save, Pill, Shield, LogOut, Download } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import HealthCard from "@/components/HealthCard";
 import { useAuth } from "@/context/AuthContext";
+import { loadUserData } from "@/lib/userStore";
+import { exportPatientHealthRecord } from "@/lib/pdfExport";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -164,6 +167,18 @@ const Profile = () => {
           </Link>
         </motion.div>
       )}
+
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }} className="mb-3">
+        <button
+          onClick={() => {
+            exportPatientHealthRecord(profile as any, loadUserData());
+            toast.success("Health record downloaded");
+          }}
+          className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3.5 text-body-lg font-bold active:scale-[0.98] transition-transform"
+        >
+          <Download size={18} /> Export Health Record (PDF)
+        </button>
+      </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
         <button
