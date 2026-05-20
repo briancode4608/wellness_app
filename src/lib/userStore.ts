@@ -1,5 +1,5 @@
 // Lightweight localStorage-backed store for user-entered records.
-// Each list is keyed per user email so multiple demo accounts stay separate.
+// Each list is keyed per signed-in user so multiple accounts stay separate.
 
 import { useSyncExternalStore } from "react";
 

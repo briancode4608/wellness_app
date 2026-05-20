@@ -84,11 +84,6 @@ const Login = () => {
         <Link to="/signup" className="text-primary font-semibold">Create an account</Link>
       </p>
 
-      <div className="mt-8 p-3 bg-muted/50 rounded-lg">
-        <p className="text-caption font-semibold text-muted-foreground mb-1">Demo accounts</p>
-        <p className="text-[0.7rem] text-muted-foreground">User: user@demo.com / password</p>
-        <p className="text-[0.7rem] text-muted-foreground">Caregiver: caregiver@demo.com / password</p>
-      </div>
     </div>
   );
 };
