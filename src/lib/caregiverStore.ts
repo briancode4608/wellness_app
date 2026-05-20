@@ -52,39 +52,10 @@ const listeners = new Set<() => void>();
 const notify = () => listeners.forEach((l) => l());
 const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
-const seed = (): Patient[] => ([
-  {
-    id: "p-1", name: "Sarah Johnson", age: 68, sex: "Female",
-    email: "sarah@example.com", phone: "+1 555 0102",
-    conditions: ["Diabetes", "Hypertension"], allergies: "Penicillin",
-    emergencyContact: "Daughter — +1 555 0188",
-    createdAt: new Date().toISOString(), riskLevel: "low",
-    prescriptions: [{
-      id: uid(), date: new Date().toISOString(),
-      medication: "Metformin", dosage: "500 mg", frequency: "Twice daily",
-      duration: "Ongoing", notes: "Take with meals", prescriber: "Dr. Lee",
-    }],
-    reviews: [{
-      id: uid(), date: new Date().toISOString(), title: "Quarterly check-up",
-      findings: "Blood glucose stable. BP 128/82.",
-      recommendations: "Continue current regimen. Increase daily walking to 30 minutes.",
-      reviewer: "Dr. Lee",
-    }],
-    insights: [{
-      id: uid(), date: new Date().toISOString(), category: "Observation",
-      note: "Patient reports improved energy after morning walks.", author: "Dr. Lee",
-    }],
-  },
-]);
-
 export const loadPatients = (): Patient[] => {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) {
-      const s = seed();
-      localStorage.setItem(KEY, JSON.stringify(s));
-      return s;
-    }
+    if (!raw) return [];
     return JSON.parse(raw);
   } catch { return []; }
 };

@@ -19,17 +19,21 @@ const colorFor = (cat: string) => {
 };
 
 const Routine = () => {
-  const [seed, setSeed] = useState<any[]>([]);
+  const [remote, setRemote] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const data = useUserData();
 
-  useEffect(() => { fetchRoutine().then((r) => setSeed(r.data)); }, []);
+  useEffect(() => {
+    fetchRoutine()
+      .then((r) => setRemote(Array.isArray(r.data) ? r.data : []))
+      .catch(() => setRemote([]));
+  }, []);
 
   const customItems = data.routine.map((r) => ({
     time: r.time, title: r.title, icon: iconFor(r.category), color: colorFor(r.category), completed: false, id: r.id,
   }));
 
-  const merged = [...seed.map((s) => ({ ...s, id: undefined })), ...customItems].sort((a, b) => {
+  const merged = [...remote.map((s) => ({ ...s, id: undefined })), ...customItems].sort((a, b) => {
     const t = (s: string) => {
       const m = s.match(/(\d+):(\d+)\s*(AM|PM)?/i);
       if (!m) return 0;

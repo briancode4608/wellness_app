@@ -2,12 +2,12 @@ import axios from "axios";
 
 /**
  * Central axios instance used for all API calls.
- * Replace baseURL with your real backend when available.
- * Auth token is automatically attached if present in localStorage.
+ * Set VITE_API_BASE_URL in your environment to point at your backend.
+ * The auth token is attached automatically when present in localStorage.
  */
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.vitalcare.local",
-  timeout: 8000,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
 });
 
 api.interceptors.request.use((config) => {
@@ -16,6 +16,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/** Helper to simulate a network call returning mock data. Swap for `api.get(url)` later. */
-export const mockRequest = <T>(data: T, delay = 350): Promise<{ data: T }> =>
-  new Promise((resolve) => setTimeout(() => resolve({ data }), delay));
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err?.response?.status === 401) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+    }
+    return Promise.reject(err);
+  }
+);
