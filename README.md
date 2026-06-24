@@ -1,73 +1,60 @@
-# Welcome to your Lovable project
+# 🏋️‍♂️ Wellness & Fitness AI Tracker
 
-## Project info
+Welcome to the frontend segment of the **Wellness & Fitness Application**—a data-driven platform designed to help individuals exercise smarter, optimize their training, and track their fitness development in real time. 
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+This entire frontend interface was rapidly prototyped and generated using **Lovable.dev**, translating natural language prompts into a production-ready user experience.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 The Lovable Prompt
 
-**Use Lovable**
+The foundation of this frontend was built using the following core prompt instructions provided to Lovable:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+> "Build a modern, highly intuitive frontend dashboard for a data-driven personal wellness and fitness application. The application should empower users to create customized exercise training plans and visualize their fitness development over time. 
+> 
+> Key features must include:
+> 1. **Interactive Dashboard:** Displaying key health metrics, daily caloric/activity progress, and upcoming workouts.
+> 2. **Workout Planner:** An interface to log exercises, sets, reps, and weights, utilizing data insights to suggest progressions.
+> 3. **Analytics Suite:** Clean, readable data visualizations (charts and graphs) tracking weight, strength gains, and endurance metrics over weeks/months.
+> 4. **User Profiles & Goals:** A section to input personal biometrics, target goals, and fitness levels to drive the personalization engine.
+> 
+> The UI should feel clean, motivating, and modern, utilizing a dark mode aesthetic with vibrant accent colors (e.g., neon green or electric blue) to emphasize health and energy."
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🛠️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The frontend architecture leverages modern web technologies generated and structured by Lovable for optimal performance, responsiveness, and clean code maintainability.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+* **Framework:** [React.js](https://react.dev/) (with Vite for lightning-fast bundling)
+* **Language:** [TypeScript](https://www.typescriptlang.org/) (ensuring type safety for complex fitness data models)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (for a fully responsive, utility-first design)
+* **UI Components:** [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) (for accessible, polished, and customizable primitives)
+* **Data Visualization:** [Recharts](https://recharts.org/) (powering the dynamic fitness progression graphs and biometric tracking charts)
+* **Icons:** [Lucide React](https://lucide.dev/) (clean, modern iconography)
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 📊 Data-Driven Features
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+This frontend is designed to handle and visualize complex user data to drive actual fitness results:
 
-# Step 3: Install the necessary dependencies.
-npm i
+* **Progressive Overload Tracking:** Visualizes volume load (Sets $\times$ Reps $\times$ Weight) over time so users know exactly when to increase intensity.
+* **Biometric Aggregation:** Displays daily trends in resting heart rate, active calories burned, and sleep quality to calculate readiness scores.
+* **Goal Forecasting:** Uses linear trends based on historical workout logs to project when a user is likely to hit their specific weight or strength goals.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## ⚡ Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+To get a local copy up and running, follow these simple steps:
 
-**Use GitHub Codespaces**
+### Prerequisites
+Ensure you have [Node.js](https://nodejs.org/) installed (v18 or higher recommended).
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Installation & Setup
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/your-username/wellness-fitness-frontend.git](https://github.com/your-username/wellness-fitness-frontend.git)
+   cd wellness-fitness-frontend
